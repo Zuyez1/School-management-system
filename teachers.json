@@ -1,0 +1,25 @@
+{
+    "rabbab": {
+        "id": "1122",
+        "Address": "islampura",
+        "Class": [
+            "Class 10"
+        ],
+        "Subject": [
+            "english",
+            "urdu"
+        ]
+    },
+    "amaar": {
+        "id": "2233",
+        "Address": "nehru park",
+        "Class": [
+            "Class 8",
+            "Class 9",
+            "Class 10"
+        ],
+        "Subject": [
+            "pak studies"
+        ]
+    }
+}
