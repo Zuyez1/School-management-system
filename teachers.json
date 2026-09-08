@@ -21,5 +21,29 @@
         "Subject": [
             "pak studies"
         ]
+    },
+    "amu": {
+        "id": "223322",
+        "Address": "isl",
+        "Class": [
+            "Class 2",
+            "Class 3",
+            "Class 4"
+        ],
+        "Subject": [
+            "uru",
+            "eng"
+        ]
+    },
+    "naam": {
+        "id": "1122",
+        "Address": "is",
+        "Class": [
+            "Class 1",
+            "Class 2"
+        ],
+        "Subject": [
+            "eng"
+        ]
     }
 }
