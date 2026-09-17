@@ -1,4 +1,6 @@
 # version 3
+import student_respository
+import teacher_respository
 import json
 class StudentManagment:
     def __init__(self):
@@ -22,26 +24,22 @@ class StudentManagment:
             self.menu()
     def add_stu(self):
             def saviour():
-             try:
-              user_c = int (input ("PLS SELECT CLASS (1-10): "))
-              user_num_stu = int(input("NUMBER OF STUDENT: "))
-             except:
-                print ("You have entered text instead of numbers.....")
-                return saviour()
-             if (user_c>10 or user_c<=0) or (user_num_stu>10 or user_num_stu<=0):
-              print ("invalid input.....") 
-              return saviour()
-             else:
-              return user_num_stu,user_c
+                while True: 
+                    try:
+                        user_c = int (input ("PLS SELECT CLASS (1-10): "))
+                        user_num_stu = int(input("NUMBER OF STUDENT: "))
+                        if (user_c>10 or user_c<=0) or (user_num_stu>10 or user_num_stu<=0):
+                            print ("invalid input.....") 
+                        else:
+                            return user_num_stu,user_c
+                    except ValueError :
+                        print ("You have entered text instead of numbers.....")
             user_num_stu,user_c=saviour()
-         
             for i in range(user_num_stu):
              user_name=input ("ENTER STUDENT NAME: ")
-             with open ("students.json","r") as f:
-              content = json.load(f)
-              content[f"c{user_c}"].append(user_name) 
-             with open ("students.json","w") as f:   
-              json.dump(content,f,indent=4)
+             content = student_respository.load_students("students.json")
+             content[f"c{user_c}"].append(user_name) 
+             student_respository.save_students("students.json",content)
             self.menu()
     def remove_stu(self):
             def saviour():
