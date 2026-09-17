@@ -1,6 +1,5 @@
 # version 3
-import student_respository
-import teacher_respository
+from Respositories import student_respository,teacher_respository
 import json
 class StudentManagment:
     def __init__(self):
