@@ -20,4 +20,3 @@ def load_students(file):
 def save_students(file,content):
    with open (file,"w") as f :
     json.dump(content,f,indent=4)
-    print("data saved...")

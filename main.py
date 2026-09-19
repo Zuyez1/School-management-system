@@ -1,5 +1,6 @@
 # version 3
 from Respositories import student_respository,teacher_respository
+from Validators import student_validator
 import json
 class StudentManagment:
     def __init__(self):
@@ -7,202 +8,102 @@ class StudentManagment:
         self.menu()
 
     def menu(self):
-        user = input(""" (1) ADD STUDENT\n(2) REMOVE STUDENT\n(3) SHOW ALL STUDENTS\n(4) Search student\n(5) Update student""")
-        if user=="1":
+        while True:
+         print ("STUDENT DASHBOARD")
+         user = input(""" (1) ADD STUDENT\n(2) REMOVE STUDENT\n(3) SHOW ALL STUDENTS\n(4) Search student\n(5) Update student \n(6) Exit""")
+         if user=="1":
             self.add_stu()
-        elif user == "2":
+         elif user == "2":
             self.remove_stu()
-        elif user == "3":
+         elif user == "3":
             self.show()
-        elif user == "4":
+         elif user == "4":
             self.search_student()
-        elif user == "5":
+         elif user == "5":
            self.student_update()
-        else:
+         elif user == "6":
+            print ("Thank you for visiting student management system")
+            break
+         else:
             print ("pls enter valid credentials")
-            self.menu()
     def add_stu(self):
-            def saviour():
-                while True: 
-                    try:
-                        user_c = int (input ("PLS SELECT CLASS (1-10): "))
-                        user_num_stu = int(input("NUMBER OF STUDENT: "))
-                        if (user_c>10 or user_c<=0) or (user_num_stu>10 or user_num_stu<=0):
-                            print ("invalid input.....") 
-                        else:
-                            return user_num_stu,user_c
-                    except ValueError :
-                        print ("You have entered text instead of numbers.....")
-            user_num_stu,user_c=saviour()
-            for i in range(user_num_stu):
-             user_name=input ("ENTER STUDENT NAME: ")
-             content = student_respository.load_students("students.json")
-             content[f"c{user_c}"].append(user_name) 
-             student_respository.save_students("students.json",content)
-            self.menu()
-    def remove_stu(self):
-            def saviour():
-                 try:
-                  user_c = int (input ("PLS SELECT CLASS (1-10): "))
-                 except:
+            while True:
+                try:
+                    user_name = input("Enter student name: ")
+                    user_c = int (input ("PLS SELECT CLASS (1-10): "))
+                    if student_validator.check_class(user_c) and student_validator.check_name(user_name):
+                        break
+                    else:
+                        print ("Enetr a valid credentials")
+                except ValueError:
                     print ("You have entered text instead of numbers.....")
-                    print("this is running")
-                    return saviour()
-                 if user_c<=10 and user_c>0:
-                  return user_c
-                 else:
-                  print ("Enetr a valid number")
-                  return saviour() 
-            user_c = saviour()
-            def name_validation():
-                user_name = input("Enter student name: ")
-                lis = []
-                with open("students.json","r") as f :
-                    content = json.load(f)
-                for name in content[f"c{user_c}"]:
-                    lis.append(name)
-                if user_name not in lis:
-                    print ("student not found")
-                    return name_validation()
-                else:
-                    return user_name        
-            user_name = name_validation()
-            with open ("students.json","r") as f:
-              content = json.load(f)
-              content[f"c{user_c}"].remove(user_name) 
-            with open ("students.json","w") as f:   
-              json.dump(content,f,indent=4)
-              print ("DATA saved..")
+            student_data = student_respository.load_students("students.json")
+            if user_name in student_data[f"c{user_c}"]:
+                print (f"student already in Class{user_c}")
+            else:
+                student_data[f"c{user_c}"].append(user_name)
+                student_respository.save_students("students.json",student_data)
+                print ("sutudent added....")
 
-            self.menu()
+    def remove_stu(self):
+            while True:
+                 try:
+                  user_name = input("Enter student name: ")
+                  user_c = int (input ("PLS SELECT CLASS (1-10): "))
+                  if student_validator.check_class(user_c) and student_validator.check_name(user_name):
+                      break
+                  else :
+                      print ("Enetr a valid class")
+                 except ValueError:
+                    print ("You have entered text instead of numbers.....")
+            content = student_respository.load_students("students.json")
+            if user_name not in content[f"c{user_c}"]:
+                print ("student doesnot exist in the class")
+            else:    
+             content[f"c{user_c}"].remove(user_name) 
+             student_respository.save_students("students.json",content)
+             print ("student removed")
     def show (self):
-        with open("students.json","r") as f:
-            content=json.load(f)
-            c_no=1
-            for cclass in content:
-                print(f"CLASS {c_no} = {content[cclass]}")
-                c_no+=1
-        self.menu()        
+        student_data = student_respository.load_students("students.json")
+        for cls , students in student_data.items():
+            print (f"{cls.replace("c","Class ")}={students}")
     def search_student(self):
-        def name_validator():
-            user_name  = input("enter name: ")
-            name = user_name.split(" ")
-            fname = []
-            if len(name) > 1:
-                for names in name:
-                    if names.isalpha():
-                        fname.append( names)
-                return (" ".join(fname))           
+        while True:
+            student_name = input("Enter student name to search : ") 
+            if student_validator.check_name(student_name):
+                break
             else:
-                return (user_name)   
-        student_name = name_validator()
-        with open ("students.json","r") as f:
-           content = json.load(f)
-        cl = 1
-        lis = []
-        for clas in content:
-            if student_name in  content[clas]:
-              a = (f"Student found in Class {cl}")
-              lis.append(a)
-              cl+=1
-            else:
-               cl+=1
-        else:
-           pass   
-        if lis == [] :
-           print ("not found")
-        else:
-           for info in lis:
-              print (info)   
-        self.menu()   
+                print ("Enter a valid name")
+        student_data = student_respository.load_students("students.json")
+        for clas in student_data:
+            if student_name in student_data[clas]:
+                print (f"{student_name} found in {clas.replace("c","Class ")}")
     def student_update(self):
-        def name_validator():
-            user_name  = input("enter name: ")
-            name = user_name.split(" ")
-            fname = []
-            if len(name) > 1:
-                for names in name:
-                    if names.isalpha():
-                        fname.append( names)
-                    else:
-                       print ("your name contain numbers which our program doesnot accept pls try again")
-                       return name_validator
-                return (" ".join(fname))           
-            else:
-                return (user_name)   
-        def cl_validation(name):
+        def move_name (): 
+            content = student_respository.load_students("students.json")
+            content[f"c{old_class}"].remove(name)
+            content[f"c{new_class}"].append(name)
+            student_respository.save_students("students.json",content)
+            print ("student saved ...")
+        while True:
             try:
-             clas_s = int(input("Enetr class: "))
-            except:
-               print ("enetr a valid input")
-               return cl_validation(name)
-            if (clas_s) in lis:
-                    try:
-                     choice = int(input("(1) Change name\n(2) Move to other class"))
-                    except:
-                       print ("Enter a valid choice")
-                       return cl_validation(name)
-                    if choice == 1 :
-                     first_name = input("Enetr first name: ")
-                     second_name = input("Enetr second name: ")
-                     if first_name.isalpha() and second_name.isalpha():
-                        final_name = first_name+" "+second_name
-                        with open("students.json","r") as f :
-                           content= json.load(f)
-                        index = content[f"c{clas_s}"].index(name)  
-                        content[f"c{clas_s}"][index]=final_name
-                        with open ("students.json","w") as f :
-                           json.dump(content,f,indent=4)
-                        print ("Name changed successfully....")   
-                     else:
-                        print ("invalid input")
-                        return cl_validation(name)
-                    elif choice==2:
-                     try: 
-                      choccie = int(input("Enter class to move a student: "))
-                     except ValueError:
-                        print ("pls ennetr numbers (1-10)")
-                        return cl_validation(name)
-                     if choccie==clas_s:
-                        print("Student is already in class")
-                        return cl_validation(name)
-                     elif choccie>10 or choccie<=0:
-                        print ("Classes we have are from 1-10 pls enter in this range")
-                        return cl_validation(name)
-                     else:
-                        with open("students.json","r") as f :
-                           content = json.load(f)
-                        content[f"c{clas_s}"].remove(name)
-                        content[f"c{choccie}"].append(name)
-                        with open("students.json","w") as f :
-                           json.dump(content,f,indent=4)  
-                        print ("student moved to new class.....")    
-                    else:
-                        print ("invalid input")
-                        return cl_validation(name)                        
-            else:
-                print("class not matched")
-                return self.menu()      
-        student_name = name_validator()
-        with open ("students.json","r") as f:
-           content = json.load(f)
-        cl = 1
-        lis = []
-        for clas in content:
-            if student_name in  content[clas]:
-              a = (f"Student found in Class {cl}")
-              print (a)
-              lis.append(cl)
-              cl+=1
-            else:
-               cl+=1
+             user_name  = input("enter name: ")
+             user_name = user_name.strip()
+             user_clas = int(input("Enetr your current class 1-10: ") )
+             user_new_class = int(input("Enetr your new class 1-10: "))
+             name = student_validator.check_name(user_name)
+             old_class = student_validator.check_class(user_clas)
+             new_class = student_validator.check_class(user_new_class)
+             if name and old_class and new_class:
+              break
+             print ("invalid credentials")
+            except ValueError:
+             print ("enetr number in class")
+        if student_validator.availabilty(new_class,old_class,name):
+            move_name()
         else:
-           pass   
-        if lis == [] :
-           print ("Student not found")
-           self.menu()
-        else:
-           cl_validation(student_name)            
+            print ("student connot transfered")
+           
     def greet(self):
         print ("WELLCOME TO THE STUDENT MANAGEMENT SYSTEM")
 
