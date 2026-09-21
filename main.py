@@ -1,6 +1,6 @@
 # version 3
 from Respositories import student_respository,teacher_respository
-from Validators import student_validator
+from Validators import student_validator , teacher_validator
 import json
 class StudentManagment:
     def __init__(self):
@@ -112,139 +112,58 @@ class TeacherManagment:
         self.greet()
         self.menu()
     def menu(self):
-        user = input("""(1) ADD TEACHER\n
+        while True:
+            user = input("""\n(1) ADD TEACHER\n
                         (2) REMOVE TEACHER\n
                         (3) SHOW ALL TEACHER\n
                         (4) SHEARCH TEACHER""")
-        if user == ("1"):
-            self.add_teacher()
-        elif user == ("2"):
-            self.rem_teacher()
-        elif user == ("3"):
-            self.show_teacher()
-        elif user == ("4"):
-            self.search_teacher()
-        else:
-            print ("pls enter a valid input")
+            if user == ("1"):
+                self.add_teacher()
+            elif user == ("2"):
+                self.rem_teacher()
+            elif user == ("3"):
+                self.show_teacher()
+            elif user == ("4"):
+                self.search_teacher()
+            else:
+                print ("pls enter a valid input")
     def add_teacher(self):
-        clas_con = []
-        teach_name = input("Enter teacher name: ")
-        teach_id = input("Enter teacher id: ")
-        teach_address = input("Enter teacher address: ")
-        def suject_validator():
-           sub_con = []
-           try:
-            teach_sub  = int(input("Enter number of subject: "))
-            if teach_sub>8 or teach_sub<=0 :
-               print ("enter a valid input")
-               return suject_validator()
-            else:
-               for i in range (teach_sub):
-                           final_sub = input("Enter subject name : ")
-                           if final_sub in sub_con:
-                               print("subject already existed")
-                           else:
-                               sub_con.append(final_sub)
-           except:
-              return suject_validator()
-        #    for i in range (teach_sub):
-        #     final_sub = input("Enter subject name : ")
-        #     if final_sub in sub_con:
-        #         print("subject already existed")
-        #     else:
-        #         sub_con.append(final_sub)
-           return sub_con     
-        sub_con= suject_validator()        
-        def validate_num_class():
-         try : 
-          teach_cl   = int(input("How many classes: "))
-          if teach_cl>10 or teach_cl<=0:
-             print ("Enetr a valid input...")
-             return validate_num_class()
-          else:
-           return teach_cl
-         except:
-            print ("Enetr a valid input")
-            return validate_num_class()
-        teach_cl = validate_num_class() 
-        for i in range (teach_cl):
-            def class_validation():   
-              try:
-                final_cls = int(input(" which class (1-10): "))
-                if final_cls>10 or final_cls<=0:
-                   print ("Enter a valid input")
-                   return class_validation()
+        while True: 
+                teach_name = input("Enter teacher name: ")
+                teach_id = (input("Enter teacher id \n Example : TXXX \n: "))
+                teach_address = input("Enter teacher address: ")
+                final_subject = teacher_validator.get_subjects()
+                num_class = teacher_validator.get_number_class()
+                if teacher_validator.check_teacher_name(teach_name) and teacher_validator.check_id(teach_id,teacher_respository.load_teacher("teachers.json")) :
+                    break
                 else:
-                 final_cls = "Class "+str(final_cls)
-                 return (final_cls)
-              except:
-                print("Enter a valid input")
-                return class_validation()
-            final_cls = class_validation()
-            
-            if final_cls in clas_con:
-                print("Class already added")
-                
-            else:
-                clas_con.append(final_cls)
-        with open("teachers.json","r") as f :
-            content=json.load(f)
-        content.update({teach_name:{"id":teach_id,
-                                         "Address":teach_address,
-                                         "Class":clas_con,
-                                         "Subject":sub_con}})   
-        with open("teachers.json","w") as f :
-            json.dump(content,f,indent=4) 
-            print ("Data saved .....")
-        choice = input("Do you want to have menu ? (y,n): ")
-        if "y" in choice.lower():
-         self.menu()  
-        else:
-            pass
+                    print ("Enter valid credentials")       
+        content = teacher_respository.load_teacher("teachers.json")
+        content[teach_id] = {"Name":teach_name,"Address":teach_address,"Subjects":final_subject,"Classes":num_class}
+        teacher_respository.save_teacher("teachers.json",content)
+        print ("DATA SAVED....")
     def rem_teacher(self):
-        t_con=[]
-        with open("teachers.json","r") as f:
-            content = json.load(f)
-        print ("list of teacher:")
-        for teacher in content:
-            t_con.append(teacher)
-            print(teacher)
-        def teacher_name_validation():
-         t_name= input("Enter teacher name: ")
-         if t_name not in t_con:
-            print (f"there is no teacher named: {t_name}")
-            return teacher_name_validation()
-         else:
-            del content[t_name]
-            return (content)
-        content = teacher_name_validation()
-        with open("teachers.json","w") as f :
-                json.dump(content,f)
-        print ("Data saved")
-        self.menu() 
-    def show_teacher(self):
-        with open("teachers.json","r") as f :
-            content = json.load(f)
-        for techers in content:
-            print(f"Teacher name : {techers}\n Subjects {techers} teach : {content[techers]["Subject"]}")
-        choice = input("Do you want to have menu ? (y,n): ")
-        if "y" in choice.lower():
-            self.menu()  
-        else:
-            pass
-    def search_teacher(self):
-        teach_n = input("Enter teacher name : ")
+        while True:
+            data = teacher_respository.load_teacher("teachers.json")
+            print (data.keys())
+            teacher_id = input("Enetr Teacher id \n like TXXX:")
+            if (teacher_validator.check_id(teacher_id,data,True)):
+                print(f"\nID = {teacher_id}\n ADDRESS = {data[teacher_id]['Address']}\n Subjects = {data[teacher_id]['Subjects']}\nClass = {data[teacher_id]['Classes']}")
+                choice = input("Do you want to delete this teacher ? (y,n)")
+                if "y" in choice.lower():
+                    del data[teacher_id]
+                    teacher_respository.save_teacher("teachers.json",data)
+                    print ("\n Teacher data deleted.....")
+                    return
+            else:
+                print ("\n Teacher does not exist")
+                return
 
-        with open ("teachers.json","r") as f :
-            content = json.load(f)
-        for teacher in content:
-            if teach_n.lower() == teacher.lower():
-                print (f"Teacher found:\nName: {teacher}\n{content[teacher]}")
-                break
-                
-        else :
-            print ("Teacher not found")
-            self.menu()
+    def show_teacher(self):
+        content = teacher_respository.load_teacher("teachers.json")
+        if content:
+            for id , data in content.items():
+                print(f"ID = {id}\n Name = {data['Name']} \n Address = {data['Address']} \n Subjects = {data['Subjects']} \n Classes = {data['Classes']}\n")
     def greet(self):
         print ("WELLCOME TO THE Teacher MANAGEMENT SYSTEM")
 
