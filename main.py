@@ -113,18 +113,13 @@ class TeacherManagment:
         self.menu()
     def menu(self):
         while True:
-            user = input("""\n(1) ADD TEACHER\n
-                        (2) REMOVE TEACHER\n
-                        (3) SHOW ALL TEACHER\n
-                        (4) SHEARCH TEACHER""")
+            user = input("(1) ADD TEACHER\n(2) REMOVE TEACHER\n(3) SHOW ALL TEACHER\n")
             if user == ("1"):
                 self.add_teacher()
             elif user == ("2"):
                 self.rem_teacher()
             elif user == ("3"):
                 self.show_teacher()
-            elif user == ("4"):
-                self.search_teacher()
             else:
                 print ("pls enter a valid input")
     def add_teacher(self):
@@ -145,7 +140,9 @@ class TeacherManagment:
     def rem_teacher(self):
         while True:
             data = teacher_respository.load_teacher("teachers.json")
-            print (data.keys())
+            print ("list of teachers id")
+            for id in data.keys():
+                print (id)
             teacher_id = input("Enetr Teacher id \n like TXXX:")
             if (teacher_validator.check_id(teacher_id,data,True)):
                 print(f"\nID = {teacher_id}\n ADDRESS = {data[teacher_id]['Address']}\n Subjects = {data[teacher_id]['Subjects']}\nClass = {data[teacher_id]['Classes']}")
@@ -158,7 +155,6 @@ class TeacherManagment:
             else:
                 print ("\n Teacher does not exist")
                 return
-
     def show_teacher(self):
         content = teacher_respository.load_teacher("teachers.json")
         if content:
@@ -166,19 +162,19 @@ class TeacherManagment:
                 print(f"ID = {id}\n Name = {data['Name']} \n Address = {data['Address']} \n Subjects = {data['Subjects']} \n Classes = {data['Classes']}\n")
     def greet(self):
         print ("WELLCOME TO THE Teacher MANAGEMENT SYSTEM")
-
-system_choice = input("""WELLCOME TO SCHOOL MANAGEMENT SYSTEM\n
-(1) STUDENT MANAGEMENT SYSTEM
-(2) TEACHER MANAGEMENT SYSTEM
-(3) EXIT 
-""")
-if system_choice=="1":
-    StudentManagment()
-elif system_choice=="2":
-    TeacherManagment()
-elif system_choice=="3":
-    print ("Thank you for visiting....\nPROGRAME EXITED")
-    pass
-else:
-    print ("Enter a valid input ")
+while True :
+    system_choice = input("""WELLCOME TO SCHOOL MANAGEMENT SYSTEM\n
+    (1) STUDENT MANAGEMENT SYSTEM
+    (2) TEACHER MANAGEMENT SYSTEM
+    (3) EXIT 
+    """)
+    if system_choice=="1":
+        StudentManagment()
+    elif system_choice=="2":
+        TeacherManagment()
+    elif system_choice=="3":
+        print ("Thank you for visiting....\nPROGRAME EXITED")
+        pass
+    else:
+        print ("Enter a valid input ")
        
